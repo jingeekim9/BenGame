@@ -1,6 +1,6 @@
 import React from "react";
 import Animated from "react-native-reanimated";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, ImageBackground } from "react-native";
 
 const Floor = (props) => {
     const width = props.size[0];
@@ -18,14 +18,13 @@ const Floor = (props) => {
     }
     
     return (
-        <View 
+        <ImageBackground 
+            source={require('../assets/game_screen/background/floor.png')}
             style={{
                 position: "absolute",
-                left: x,
-                top: y,
-                width: width,
-                height: height,
-                backgroundColor: '#876445'
+                width: '100%',
+                height: '100%',
+                bottom: 0
             }}
         >
             <View style={styles.bottomContainer}>
@@ -39,14 +38,17 @@ const Floor = (props) => {
                     </View>
                 </View>
             </View>
-        </View>
+        </ImageBackground>
     );
 };
 
 const styles = StyleSheet.create({
     bottomContainer: {  
         flexDirection: 'row',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        flex: 1,
+        alignItems: 'flex-end',
+        marginBottom: 30
     },
     textStyle: {
         fontSize: 25,

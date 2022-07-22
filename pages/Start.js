@@ -1,6 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Dimensions, ImageBackground, Animated, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, ImageBackground, Animated, TouchableOpacity, Pressable } from 'react-native';
+import Modal from 'react-native-modal';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -8,8 +9,12 @@ export default class Start extends Component {
 
   constructor(props) {
     super(props)
+    this.state = {
+      showModal: false
+    }
     this.opacity_title = new Animated.Value(0);
     this.opacity_text = new Animated.Value(0);
+    
   }
 
   componentDidMount() {
@@ -29,7 +34,7 @@ export default class Start extends Component {
   render() {
     return (
         <View style={styles.container}>
-            <ImageBackground source={require('../assets/start_screen.jpg')} resizeMode="cover" style={styles.image}>
+            <ImageBackground source={require('../assets/opening_screen/start_screen.png')} resizeMode="cover" style={styles.image}>
               <Animated.View style={{
                 opacity: this.opacity_title
               }}>
@@ -46,9 +51,22 @@ export default class Start extends Component {
               </Animated.View>
               <TouchableOpacity 
                 style={styles.pressArea}
-                onPress={() => this.props.navigation.navigate("Game")}
+                onPress={() => this.setState({showModal: true})}
               />
             </ImageBackground>
+            <Modal isVisible={this.state.showModal}>
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    <View style={{backgroundColor: 'white', paddingVertical: 20, paddingHorizontal: 10, borderRadius: 10}}>
+                    <Text style={styles.funFact}>Take a sustainability quiz before the game!</Text>
+                        <Pressable style={styles.button} onPress={() => {
+                            this.props.navigation.navigate("PreQuiz");
+                            this.setState({showModal: false});
+                        }}>
+                            <Text style={{color: 'white', textAlign: 'center'}}>Take Quiz</Text>
+                        </Pressable>
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
   }
@@ -69,7 +87,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   startText: {
-    color: 'white',
+    color: 'black',
     fontSize: 30,
     textAlign: 'center',
     marginTop: 300,
@@ -83,5 +101,23 @@ const styles = StyleSheet.create({
     borderRadius: 350,
     top: 280,
     left: screenWidth/2 - 175
-  }
+  },
+  funFact: {
+      textAlign: 'center',
+      fontSize: 30,
+      marginBottom: 30,
+      fontWeight: '800',
+      color: 'black'
+  },
+  button: {
+    width: 150,
+    backgroundColor: "#5E5DF0",
+    padding: 10,
+    color: 'white',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    marginTop: 30,
+    marginBottom: 30,
+    borderRadius: 20
+},
 });

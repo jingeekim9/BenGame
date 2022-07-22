@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, TouchableOpacity, Image } from 'react-native';
 import { GameEngine } from 'react-native-game-engine';
 import Matter from "matter-js";
 import { Trash } from "./Trash";
@@ -9,6 +9,8 @@ import { Floor } from "./Floor";
 import { Wall } from "./Wall";
 import { Physics, createTrash, MoveTrash, deleteTrash } from "./Systems";
 import { useFocusEffect } from '@react-navigation/native';
+import { Background } from './Background';
+import Modal from "react-native-modal";
 
 function RestartPlay({ gameRunning, onUpdate }) {
   useFocusEffect(
@@ -34,9 +36,9 @@ const randomPosition = Math.floor(Math.random() * width);
 
 const trash = Matter.Bodies.rectangle(randomPosition, 0, boxSize, boxSize);
 
-const recycleCan = Matter.Bodies.rectangle(40, height/2, 50, 50, {isStatic: true, collisionFilter: {category: 2}});
+const recycleCan = Matter.Bodies.rectangle(40, height/2, 75, 75, {isStatic: true, collisionFilter: {category: 2}});
 
-const nonRecycleCan = Matter.Bodies.rectangle(width-40, height/2, 50, 50, {isStatic: true, collisionFilter: {category: 2}});
+const nonRecycleCan = Matter.Bodies.rectangle(width-40, height/2, 75, 75, {isStatic: true, collisionFilter: {category: 2}});
 
 const floor = Matter.Bodies.rectangle(width/2, height - boxSize/2, width, boxSize*4, {isStatic: true, collisionFilter: {category: 2}});
 
@@ -60,7 +62,10 @@ export default class Game extends Component {
     super(props);
     this.state = {
       gameRunning: true,
-      score: 0
+      score: 0,
+      modalVisible: false,
+      quizModalVisible: false,
+      preQuiz: this.props.route.params.preQuiz
     }
   }
 
@@ -75,6 +80,9 @@ export default class Game extends Component {
         style={[styles.container]}
         systems={[Physics, createTrash, MoveTrash, deleteTrash]}
         entities={{
+          background: {
+            renderer: Background
+          },
           physics: {
             engine: engine,
             world: world,
@@ -82,14 +90,16 @@ export default class Game extends Component {
           },
           recycleCan: {
             body: recycleCan,
-            size: [50, 50],
+            size: [75, 75],
             backgroundColor: 'blue',
+            type: 'recycleCan',
             renderer: TrashCan
           },
           nonRecycleCan: {
             body: nonRecycleCan,
-            size: [50, 50],
+            size: [75, 75],
             backgroundColor: 'red',
+            type: 'nonRecycleCan',
             renderer: TrashCan
           },
           floor: {
@@ -115,10 +125,14 @@ export default class Game extends Component {
           switch(e) {
             case "game-over":
               this.setState({gameRunning: false});
-              this.props.navigation.navigate("GameOver", {score: this.state.score});
+              this.props.navigation.navigate("GameOver", {score: this.state.score, preQuiz: this.state.preQuiz});
               break;
             case "update-score":
               this.setState({score: this.state.score + 1});
+              break;
+            case "next_level":
+              this.setState({gameRunning: false});
+              this.setState({quizModalVisible: true});
           }
         }}
       >
@@ -127,6 +141,55 @@ export default class Game extends Component {
           gameRunning={this.props.gameRunning}
           onUpdate={this._handleUpdate}
         />
+        <TouchableOpacity 
+          style={styles.pause_container}
+          onPress={() => {
+          this.setState({gameRunning: false});
+          this.setState({modalVisible: true});
+          console.log("paused")
+          }}
+          >
+          <Image 
+            style={styles.pause_image}
+            source={require('../assets/pause.png')} 
+            />
+        </TouchableOpacity>
+        <Modal
+          animationType='fade'
+          visible={this.state.modalVisible}
+          transparent={true}
+          onRequestClose={() => {
+            this.setState({modalVisible: false});
+          }}
+        >
+          <TouchableOpacity 
+            style={{flex:1, justifyContent: 'center', alignItems: 'center'}}
+            onPress={() => {
+              this.setState({modalVisible: false});
+              this.setState({gameRunning: true})
+            }}  
+          >
+            <View style={{backgroundColor: 'white', width: 200, height: 100, borderRadius: 10, justifyContent: 'center'}}>
+              <Text style={{textAlign: 'center', fontWeight: 'bold', fontSize: 30}}>
+                Play
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </Modal>
+        <Modal isVisible={this.state.quizModalVisible}>
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <View style={{backgroundColor: 'white', paddingVertical: 20, paddingHorizontal: 10, borderRadius: 10}}>
+              <Text style={styles.funFact}>Sustainability Fact</Text>
+                <Text style={styles.questionText}>Temporary Sustainability Fact</Text>
+                <TouchableOpacity style={styles.button} onPress={() => {
+                  this.setState({quizModalVisible: false});
+                  this.setState({gameRunning: true});
+                }}>
+                    <Text style={{color: 'white', textAlign: 'center'}}>Continue</Text>
+                </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
       </GameEngine>
     );
   }
@@ -136,5 +199,39 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  pause_container: {
+    position: 'absolute',
+    top: 30,
+    right: 30
+  },
+  pause_image: {
+    width: 30,
+    height: 30
+  },
+  button: {
+    width: 150,
+    backgroundColor: "#5E5DF0",
+    padding: 10,
+    color: 'white',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    marginTop: 30,
+    marginBottom: 30,
+    borderRadius: 20
+  },
+  funFact: {
+      textAlign: 'center',
+      fontSize: 30,
+      marginBottom: 30,
+      fontWeight: '800',
+      color: '#019267'
+  },
+  questionText: {
+      textAlign: 'center',
+      paddingLeft: 30,
+      paddingRight: 30,
+      fontSize: 20,
+      fontWeight: '700',
   },
 });

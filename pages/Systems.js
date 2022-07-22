@@ -13,10 +13,11 @@ const distance = ([x1, y1], [x2, y2]) => {
 const Physics = (entities, { time, dispatch }) => {
     let engine = entities["physics"].engine;
     let world = entities["physics"].world;
+    let score = entities['floor'].score;
 
     let life = entities.floor.life;
-
-    if(life == 0)
+ 
+    if(life == 0 || trashId >= (score + 30))
     {
         entities.floor.life = 3;
         entities.floor.score = 0;
@@ -29,6 +30,8 @@ const Physics = (entities, { time, dispatch }) => {
                 delete entities[i];
             }
         }
+        
+        trashId = 0;
 
         dispatch("game-over");
     }
@@ -38,7 +41,7 @@ const Physics = (entities, { time, dispatch }) => {
     return entities;
 }
 
-const createTrash = (entities, { time }) => {
+const createTrash = (entities, { time, dispatch }) => {
     timePassed = timePassed + time.delta;
     let score = entities.floor.score
 
@@ -51,13 +54,14 @@ const createTrash = (entities, { time }) => {
                 // The code that creates a new trash
                 const {width, height} = Dimensions.get("screen");
 
-                const boxSize = Math.trunc(Math.max(width, height) * 0.045);
+                const boxSize = Math.trunc(Math.max(width, height) * 0.05);
 
-                const randomPosition = Math.floor(Math.random() * (width- 90 - 90)) + 90;
+                const randomPosition = Math.floor(Math.random() * (width- 125 - 125)) + 125;
 
                 const trash = Matter.Bodies.rectangle(randomPosition, 0, boxSize, boxSize);
 
                 const type = Math.round(Math.random());
+                const random = Math.round(Math.random() * 0);
 
                 let world = entities["physics"].world;
 
@@ -68,24 +72,58 @@ const createTrash = (entities, { time }) => {
                     size: [boxSize, boxSize],
                     id: trash.id,
                     type: type,
+                    random: random,
                     renderer: Trash
                 }
                 dropTrash = true;
             }
-            else if(score >= 20 && score < 50)
+            else if(score >= 20 && score < 40)
+            {
+                // The code that creates a new trash
+                const {width, height} = Dimensions.get("screen");
+
+                const boxSize = Math.trunc(Math.max(width, height) * 0.05);
+
+                const randomPosition = Math.floor(Math.random() * (width- 125 - 125)) + 125;
+
+                const trash = Matter.Bodies.rectangle(randomPosition, 0, boxSize, boxSize);
+
+                const type = Math.round(Math.random());
+                const random = Math.round(Math.random() * 1);
+
+                let world = entities["physics"].world;
+
+                Matter.World.add(world, [trash]);
+
+                entities[++trashId] = {
+                    body: trash,
+                    size: [boxSize, boxSize],
+                    id: trash.id,
+                    type: type,
+                    random: random,
+                    renderer: Trash
+                }
+                dropTrash = true;
+                if(score == 20)
+                {
+                    dispatch('next_level')
+                }
+            }
+            else if(score >= 40 && score < 60)
             {
                 for(var i = 0; i < 2; i++)
                 {
                    // The code that creates a new trash
                    const {width, height} = Dimensions.get("screen");
 
-                   const boxSize = Math.trunc(Math.max(width, height) * 0.045);
+                   const boxSize = Math.trunc(Math.max(width, height) * 0.05);
    
-                   const randomPosition = Math.floor(Math.random() * (width- 90 - 90)) + 90;
+                   const randomPosition = Math.floor(Math.random() * (width- 125 - 125)) + 125;
    
                    const trash = Matter.Bodies.rectangle(randomPosition, 0, boxSize, boxSize);
    
                    const type = Math.round(Math.random());
+                   const random = Math.round(Math.random() * 2);
    
                    let world = entities["physics"].world;
    
@@ -96,10 +134,50 @@ const createTrash = (entities, { time }) => {
                        size: [boxSize, boxSize],
                        id: trash.id,
                        type: type,
+                       random: random,
                        renderer: Trash
                    }
                 }
                 dropTrash = true;
+                if(score == 40)
+                {
+                    dispatch('next_level')
+                }
+            }
+            else if(score >= 60 && score < 80)
+            {
+                for(var i = 0; i < 2; i++)
+                {
+                   // The code that creates a new trash
+                   const {width, height} = Dimensions.get("screen");
+
+                   const boxSize = Math.trunc(Math.max(width, height) * 0.05);
+   
+                   const randomPosition = Math.floor(Math.random() * (width- 125 - 125)) + 125;
+   
+                   const trash = Matter.Bodies.rectangle(randomPosition, 0, boxSize, boxSize);
+   
+                   const type = Math.round(Math.random());
+                   const random = Math.round(Math.random() * 3);
+   
+                   let world = entities["physics"].world;
+   
+                   Matter.World.add(world, [trash]);
+   
+                   entities[++trashId] = {
+                       body: trash,
+                       size: [boxSize, boxSize],
+                       id: trash.id,
+                       type: type,
+                       random: random,
+                       renderer: Trash
+                   }
+                }
+                dropTrash = true;
+                if(score == 60)
+                {
+                    dispatch('next_level')
+                }
             }
             else
             {
@@ -108,13 +186,14 @@ const createTrash = (entities, { time }) => {
                    // The code that creates a new trash
                    const {width, height} = Dimensions.get("screen");
 
-                   const boxSize = Math.trunc(Math.max(width, height) * 0.045);
+                   const boxSize = Math.trunc(Math.max(width, height) * 0.05);
    
-                   const randomPosition = Math.floor(Math.random() * (width- 90 - 90)) + 90;
+                   const randomPosition = Math.floor(Math.random() * (width- 125 - 125)) + 125;
    
                    const trash = Matter.Bodies.rectangle(randomPosition, 0, boxSize, boxSize);
    
                    const type = Math.round(Math.random());
+                   const random = Math.round(Math.random() * 4);
    
                    let world = entities["physics"].world;
    
@@ -125,10 +204,15 @@ const createTrash = (entities, { time }) => {
                        size: [boxSize, boxSize],
                        id: trash.id,
                        type: type,
+                       random: random,
                        renderer: Trash
                    }
                 }
                 dropTrash = true;
+                if(score == 80)
+                {
+                    dispatch('next_level')
+                }
             }
             
         }
