@@ -11,6 +11,7 @@ import { Physics, createTrash, MoveTrash, deleteTrash } from "./Systems";
 import { useFocusEffect } from '@react-navigation/native';
 import { Background } from './Background';
 import Modal from "react-native-modal";
+import axios from 'axios';
 
 function RestartPlay({ gameRunning, onUpdate }) {
   useFocusEffect(
@@ -65,8 +66,30 @@ export default class Game extends Component {
       score: 0,
       modalVisible: false,
       quizModalVisible: false,
-      preQuiz: this.props.route.params.preQuiz
+      preQuiz: this.props.route.params.preQuiz,
+      facts: [],
+      level: 0
     }
+  }
+
+  componentDidMount() {
+    axios.get('https://dust-game.herokuapp.com?type=1')
+    .then((response) => {
+      let data = response.data;
+      let arr = [];
+      let facts = [];
+      while(facts.length < 10)
+      {
+        let random = Math.floor(Math.random() * Object.keys(data['Facts']).length);
+        if(arr.indexOf(random) === -1)
+        {
+          facts.push(data['Facts'][String(random)]);
+          arr.push(random);
+        }
+      }
+
+      this.setState({facts: facts});
+    })
   }
 
   _handleUpdate = gameRunning => {
@@ -133,6 +156,7 @@ export default class Game extends Component {
             case "next_level":
               this.setState({gameRunning: false});
               this.setState({quizModalVisible: true});
+              this.setState({level: this.state.level + 1});
           }
         }}
       >
@@ -180,7 +204,7 @@ export default class Game extends Component {
           <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <View style={{backgroundColor: 'white', paddingVertical: 20, paddingHorizontal: 10, borderRadius: 10}}>
               <Text style={styles.funFact}>Sustainability Fact</Text>
-                <Text style={styles.questionText}>Temporary Sustainability Fact</Text>
+                <Text style={styles.questionText}>{this.state.facts[this.state.level]}</Text>
                 <TouchableOpacity style={styles.button} onPress={() => {
                   this.setState({quizModalVisible: false});
                   this.setState({gameRunning: true});

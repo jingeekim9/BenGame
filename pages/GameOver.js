@@ -30,7 +30,7 @@ export default class GameOver extends Component {
 
     fetchData = () => {
         db.transaction(tx => {
-            tx.executeSql('SELECT * FROM test ORDER BY score DESC LIMIT 5', null,
+            tx.executeSql('SELECT * FROM scores ORDER BY score DESC LIMIT 5', null,
                 (txObj, { rows: { _array } }) => this.setState({ data: _array }),
                 (txObj, error) => console.log('Error', error)
             )
@@ -39,8 +39,8 @@ export default class GameOver extends Component {
 
     addScore = (name, score) => {
         db.transaction(tx => {
-            tx.executeSql('INSERT INTO test (name, score) values (?, ?)', [name, score]);
-            tx.executeSql('SELECT * FROM test ORDER BY score DESC LIMIT 5', null,
+            tx.executeSql('INSERT INTO scores (name, score) values (?, ?)', [name, score]);
+            tx.executeSql('SELECT * FROM scores ORDER BY score DESC LIMIT 5', null,
                 (txObj, { rows: { _array } }) => this.setState({ data: _array }),
                 (txObj, error) => console.log('Error', error)
             )

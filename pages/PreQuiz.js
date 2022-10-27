@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View, Button, Animated, Pressable, ActivityIndicator, ImageBackground } from 'react-native';
 import Toast from "react-native-toast-message";
 import Modal from 'react-native-modal';
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
     
 export default class PreQuiz extends Component {
 
@@ -19,6 +20,7 @@ export default class PreQuiz extends Component {
             option3: [],
             option4: [],
             answer: [],
+            type: [],
             right1: false,
             right2: false,
             right3: false,
@@ -31,92 +33,63 @@ export default class PreQuiz extends Component {
             quesNum: 0,
             curQuestion: 0,
             showModal: false,
-            canPress: true
+            canPress: true,
+            isLoading: false,
+            canPressNext: false
         }
     }
 
     componentDidMount() {
         this._isMounted = true;
-        let arr = [];
-        let questions = [];
-        let option1 = [];
-        let option2 = [];
-        let option3 = [];
-        let option4 = [];
-        let answer = [];
-        while(questions.length < 5)
-        {
-            // questions.push(data['Question'][String(random)]);
-            // option1.push(data['Option1'][String(random)]);
-            // option2.push(data['Option2'][String(random)]);
-            // option3.push(data['Option3'][String(random)]);
-            // option4.push(data['Option4'][String(random)]);
-            // answer.push(data['Answer'][String(random)]);
-            questions.push('test question');
-            option1.push('option1');
-            option2.push('option2');
-            option3.push('option3');
-            option4.push('option4');
-            answer.push((Math.random() * 4) + 1);
-        }
-        if(this._isMounted)
-        {
-            this.setState({question: questions});
-            this.setState({option1: option1});
-            this.setState({option2: option2});
-            this.setState({option3: option3});
-            this.setState({option4: option4});
-            this.setState({answer: answer});
-        }
-        // axios.get('https://sus-game.herokuapp.com?type=2')
-        // .then((response) => {
-        //     let data = response.data;
-        //     let arr = [];
-        //     let questions = [];
-        //     let option1 = [];
-        //     let option2 = [];
-        //     let option3 = [];
-        //     let option4 = [];
-        //     let answer = [];
-        //     while(questions.length < 5)
-        //     {
-        //         let random = Math.floor(Math.random() * Object.keys(data['Answer']).length);
-        //         if(arr.indexOf(random) === -1)
-        //         {
-        //             // questions.push(data['Question'][String(random)]);
-        //             // option1.push(data['Option1'][String(random)]);
-        //             // option2.push(data['Option2'][String(random)]);
-        //             // option3.push(data['Option3'][String(random)]);
-        //             // option4.push(data['Option4'][String(random)]);
-        //             // answer.push(data['Answer'][String(random)]);
-        //             questions.push('test question');
-        //             option1.push('option1');
-        //             option2.push('option2');
-        //             option3.push('option3');
-        //             option4.push('option4');
-        //             answer.push((Math.random() * 4) + 1);
-        //             arr.push(random);
-        //         } 
-        //     }
-        //     if(this._isMounted)
-        //     {
-        //         this.setState({question: questions});
-        //         this.setState({option1: option1});
-        //         this.setState({option2: option2});
-        //         this.setState({option3: option3});
-        //         this.setState({option4: option4});
-        //         this.setState({answer: answer});
-        //     }
-        // })
+        this.setState({isLoading: true});
+        axios.get('https://dust-game.herokuapp.com?type=2')
+        .then((response) => {
+            let data = JSON.parse(response.data.replace(/\bNaN\b/g, "null"));
+            let arr = [];
+            let questions = [];
+            let option1 = [];
+            let option2 = [];
+            let option3 = [];
+            let option4 = [];
+            let answer = [];
+            let type = [];
+            while(questions.length < 10)
+            {
+                let random = Math.floor(Math.random() * Object.keys(data['Answer']).length);
+                if(arr.indexOf(random) === -1)
+                {
+                    questions.push(data['Question'][String(random)]);
+                    option1.push(data['Option1'][String(random)]);
+                    option2.push(data['Option2'][String(random)]);
+                    option3.push(data['Option3'][String(random)]);
+                    option4.push(data['Option4'][String(random)]);
+                    answer.push(data['Answer'][String(random)]);
+                    type.push(data['Type'][String(random)]);
+                    arr.push(random);
+                } 
+            }
+            if(this._isMounted)
+            {
+                this.setState({question: questions});
+                this.setState({option1: option1});
+                this.setState({option2: option2});
+                this.setState({option3: option3});
+                this.setState({option4: option4});
+                this.setState({answer: answer});
+                this.setState({type: type});
+            }
+            this.setState({isLoading: false});
+        })
     }
 
     componentWillUnmount() {
         this._isMounted = false;
     }
 
-    answerQuestion(option) {
+    answerQuestion(option, type) {
         this.setState({quesNum: this.state.quesNum + 1});
         this.setState({canPress: false});
+        this.setState({canPressNext: true});
         if(option == this.state.answer[this.state.curQuestion])
         {
             Toast.show({
@@ -127,21 +100,35 @@ export default class PreQuiz extends Component {
 
             this.setState({right: this.state.right + 1});
 
-            if(option == 1)
+            if(type == "True/False")
             {
-                this.setState({right1: true});
+                if(option == "TRUE")
+                {
+                    this.setState({right1: true});
+                }
+                else
+                {
+                    this.setState({right2: true});
+                }
             }
-            else if(option == 2)
+            else
             {
-                this.setState({right2: true});
-            }
-            else if(option == 3)
-            {
-                this.setState({right3: true});
-            }
-            else if(option == 4)
-            {
-                this.setState({right4: true});
+                if(option == 1)
+                {
+                    this.setState({right1: true});
+                }
+                else if(option == 2)
+                {
+                    this.setState({right2: true});
+                }
+                else if(option == 3)
+                {
+                    this.setState({right3: true});
+                }
+                else if(option == 4)
+                {
+                    this.setState({right4: true});
+                }
             }
         }
         else
@@ -151,40 +138,68 @@ export default class PreQuiz extends Component {
                 text1: 'Wrong!',
                 visibilityTime: 2000
             });
-            if(option == 1)
+
+            if(type == "True/False")
             {
-                this.setState({wrong1: true});
+                if(option == "TRUE")
+                {
+                    this.setState({wrong1: true});
+                }
+                else
+                {
+                    this.setState({wrong2: true});
+                }
             }
-            else if(option == 2)
+            else
             {
-                this.setState({wrong2: true});
+                if(option == 1)
+                {
+                    this.setState({wrong1: true});
+                }
+                else if(option == 2)
+                {
+                    this.setState({wrong2: true});
+                }
+                else if(option == 3)
+                {
+                    this.setState({wrong3: true});
+                }
+                else if(option == 4)
+                {
+                    this.setState({wrong4: true});
+                }
             }
-            else if(option == 3)
-            {
-                this.setState({wrong3: true});
-            }
-            else if(option == 4)
-            {
-                this.setState({wrong4: true});
-            }
+
         }
-        if(this.state.curQuestion == 4)
+        if(this.state.curQuestion == 9)
         {
             this.setState({showModal: true})
         }
     }
 
     next() {
-        this.setState({curQuestion: this.state.curQuestion + 1});
-        this.setState({right1: false});
-        this.setState({right2: false});
-        this.setState({right3: false});
-        this.setState({right4: false});
-        this.setState({wrong1: false});
-        this.setState({wrong2: false});
-        this.setState({wrong3: false});
-        this.setState({wrong4: false});
-        this.setState({canPress: true});
+        if(this.state.canPressNext == false)
+        {
+            Toast.show({
+                type: 'error',
+                text1: 'Please answer the question.',
+                visibilityTime: 2000
+            });
+        }
+        else
+        {
+            this.setState({curQuestion: this.state.curQuestion + 1});
+            this.setState({right1: false});
+            this.setState({right2: false});
+            this.setState({right3: false});
+            this.setState({right4: false});
+            this.setState({wrong1: false});
+            this.setState({wrong2: false});
+            this.setState({wrong3: false});
+            this.setState({wrong4: false});
+            this.setState({canPress: true});
+            this.setState({canPressNext: false});
+        }
     }
 
     render() {
@@ -203,26 +218,47 @@ export default class PreQuiz extends Component {
                             Quiz
                         </Text>
                     </View>
-                    {this.state.option1.length == 0 ?
-                        <ActivityIndicator style={{marginTop: 300}} size="large" />
+                    {
+                        this.state.isLoading ?
+                        <ActivityIndicator style={{textAlign: 'center', marginTop: hp(30)}} size="large" color="#0000ff" />
                         :
                         <View style={styles.info_container}>
                             <Text style={styles.funFact}>{this.state.question[this.state.curQuestion]}</Text>
-                            <Pressable disabled={!this.state.canPress} style={[styles.button, {backgroundColor: this.state.right1 ? "#5E5DF0" : this.state.wrong1 ? '#F24A72' : "#565962"}]} onPress={() => {this.answerQuestion(1);}}>
-                                <Text style={{color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: 20}}>{this.state.option1[this.state.curQuestion]}</Text>
-                            </Pressable>
-                            <Pressable disabled={!this.state.canPress} style={[styles.button, {backgroundColor: this.state.right2 ? "#5E5DF0" : this.state.wrong2 ? '#F24A72' : "#565962"}]} onPress={() => {this.answerQuestion(2);}}>
-                                <Text style={{color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: 20}}>{this.state.option2[this.state.curQuestion]}</Text>
-                            </Pressable>
-                            <Pressable disabled={!this.state.canPress} style={[styles.button, {backgroundColor: this.state.right3 ? "#5E5DF0" : this.state.wrong3 ? '#F24A72' : "#565962"}]} onPress={() => {this.answerQuestion(3);}}>
-                                <Text style={{color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: 20}}>{this.state.option3[this.state.curQuestion]}</Text>
-                            </Pressable>
-                            <Pressable disabled={!this.state.canPress} style={[styles.button, {backgroundColor: this.state.right4 ? "#5E5DF0" : this.state.wrong4 ? '#F24A72' : "#565962"}]} onPress={() => {this.answerQuestion(4);}}>
-                                <Text style={{color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: 20}}>{this.state.option4[this.state.curQuestion]}</Text>
-                            </Pressable>
+                            {
+                                this.state.type[this.state.curQuestion] == "True/False" ?
+                                <View>
+                                    <Pressable disabled={!this.state.canPress} style={[styles.button, {backgroundColor: this.state.right1 ? "#5E5DF0" : this.state.wrong1 ? '#F24A72' : "#565962"}]} onPress={() => {this.answerQuestion('TRUE', this.state.type[this.state.curQuestion]);}}>
+                                        <Text style={{color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: 20}}>True</Text>
+                                    </Pressable>
+                                    <Pressable disabled={!this.state.canPress} style={[styles.button, {backgroundColor: this.state.right2 ? "#5E5DF0" : this.state.wrong2 ? '#F24A72' : "#565962"}]} onPress={() => {this.answerQuestion('FALSE', this.state.type[this.state.curQuestion]);}}>
+                                        <Text style={{color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: 20}}>False</Text>
+                                    </Pressable>
+                                </View>
+                                :
+                                <View>
+                                    <Pressable disabled={!this.state.canPress} style={[styles.button, {backgroundColor: this.state.right1 ? "#5E5DF0" : this.state.wrong1 ? '#F24A72' : "#565962"}]} onPress={() => {this.answerQuestion(1, this.state.type[this.state.curQuestion]);}}>
+                                        <Text style={{color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: 20}}>{this.state.option1[this.state.curQuestion]}</Text>
+                                    </Pressable>
+                                    <Pressable disabled={!this.state.canPress} style={[styles.button, {backgroundColor: this.state.right2 ? "#5E5DF0" : this.state.wrong2 ? '#F24A72' : "#565962"}]} onPress={() => {this.answerQuestion(2, this.state.type[this.state.curQuestion]);}}>
+                                        <Text style={{color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: 20}}>{this.state.option2[this.state.curQuestion]}</Text>
+                                    </Pressable>
+                                    {
+                                        this.state.option3[this.state.curQuestion] &&
+                                        <Pressable disabled={!this.state.canPress} style={[styles.button, {backgroundColor: this.state.right3 ? "#5E5DF0" : this.state.wrong3 ? '#F24A72' : "#565962"}]} onPress={() => {this.answerQuestion(3, this.state.type[this.state.curQuestion]);}}>
+                                            <Text style={{color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: 20}}>{this.state.option3[this.state.curQuestion]}</Text>
+                                        </Pressable>
+                                    }
+                                    {
+                                        this.state.option4[this.state.curQuestion] &&
+                                        <Pressable disabled={!this.state.canPress} style={[styles.button, {backgroundColor: this.state.right4 ? "#5E5DF0" : this.state.wrong4 ? '#F24A72' : "#565962"}]} onPress={() => {this.answerQuestion(4, this.state.type[this.state.curQuestion]);}}>
+                                            <Text style={{color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: 20}}>{this.state.option4[this.state.curQuestion]}</Text>
+                                        </Pressable>
+                                    }
+                                </View>
+                            }
                             <View>
                                 {
-                                    this.state.curQuestion < 4 &&
+                                    this.state.curQuestion < 9 &&
                                     <Pressable style={styles.nextQuestion} onPress={() => {
                                         this.next();
                                         }}>
