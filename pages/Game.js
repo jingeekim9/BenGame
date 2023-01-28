@@ -195,7 +195,7 @@ export default class Game extends Component {
           >
             <View style={{backgroundColor: 'white', width: 200, height: 100, borderRadius: 10, justifyContent: 'center'}}>
               <Text style={{textAlign: 'center', fontWeight: 'bold', fontSize: 30}}>
-                Play
+                Resume
               </Text>
             </View>
           </TouchableOpacity>

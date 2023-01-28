@@ -228,30 +228,30 @@ export default class PreQuiz extends Component {
                                 this.state.type[this.state.curQuestion] == "True/False" ?
                                 <View>
                                     <Pressable disabled={!this.state.canPress} style={[styles.button, {backgroundColor: this.state.right1 ? "#5E5DF0" : this.state.wrong1 ? '#F24A72' : "#565962"}]} onPress={() => {this.answerQuestion('TRUE', this.state.type[this.state.curQuestion]);}}>
-                                        <Text style={{color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: 20}}>True</Text>
+                                        <Text style={{color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: hp(2)}}>True</Text>
                                     </Pressable>
                                     <Pressable disabled={!this.state.canPress} style={[styles.button, {backgroundColor: this.state.right2 ? "#5E5DF0" : this.state.wrong2 ? '#F24A72' : "#565962"}]} onPress={() => {this.answerQuestion('FALSE', this.state.type[this.state.curQuestion]);}}>
-                                        <Text style={{color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: 20}}>False</Text>
+                                        <Text style={{color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: hp(2)}}>False</Text>
                                     </Pressable>
                                 </View>
                                 :
                                 <View>
                                     <Pressable disabled={!this.state.canPress} style={[styles.button, {backgroundColor: this.state.right1 ? "#5E5DF0" : this.state.wrong1 ? '#F24A72' : "#565962"}]} onPress={() => {this.answerQuestion(1, this.state.type[this.state.curQuestion]);}}>
-                                        <Text style={{color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: 20}}>{this.state.option1[this.state.curQuestion]}</Text>
+                                        <Text style={{color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: hp(2)}}>{this.state.option1[this.state.curQuestion]}</Text>
                                     </Pressable>
                                     <Pressable disabled={!this.state.canPress} style={[styles.button, {backgroundColor: this.state.right2 ? "#5E5DF0" : this.state.wrong2 ? '#F24A72' : "#565962"}]} onPress={() => {this.answerQuestion(2, this.state.type[this.state.curQuestion]);}}>
-                                        <Text style={{color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: 20}}>{this.state.option2[this.state.curQuestion]}</Text>
+                                        <Text style={{color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: hp(2)}}>{this.state.option2[this.state.curQuestion]}</Text>
                                     </Pressable>
                                     {
                                         this.state.option3[this.state.curQuestion] &&
                                         <Pressable disabled={!this.state.canPress} style={[styles.button, {backgroundColor: this.state.right3 ? "#5E5DF0" : this.state.wrong3 ? '#F24A72' : "#565962"}]} onPress={() => {this.answerQuestion(3, this.state.type[this.state.curQuestion]);}}>
-                                            <Text style={{color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: 20}}>{this.state.option3[this.state.curQuestion]}</Text>
+                                            <Text style={{color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: hp(2)}}>{this.state.option3[this.state.curQuestion]}</Text>
                                         </Pressable>
                                     }
                                     {
                                         this.state.option4[this.state.curQuestion] &&
                                         <Pressable disabled={!this.state.canPress} style={[styles.button, {backgroundColor: this.state.right4 ? "#5E5DF0" : this.state.wrong4 ? '#F24A72' : "#565962"}]} onPress={() => {this.answerQuestion(4, this.state.type[this.state.curQuestion]);}}>
-                                            <Text style={{color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: 20}}>{this.state.option4[this.state.curQuestion]}</Text>
+                                            <Text style={{color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: hp(2)}}>{this.state.option4[this.state.curQuestion]}</Text>
                                         </Pressable>
                                     }
                                 </View>
@@ -262,7 +262,7 @@ export default class PreQuiz extends Component {
                                     <Pressable style={styles.nextQuestion} onPress={() => {
                                         this.next();
                                         }}>
-                                        <Text style={{textAlign: 'center', color: 'white', fontWeight: 'bold', fontSize: 20}}>Next Question</Text>
+                                        <Text style={{textAlign: 'center', color: 'white', fontWeight: 'bold', fontSize: hp(2)}}>Next Question</Text>
                                     </Pressable>
                                 }
                                 <Pressable style={styles.goBack} onPress={() => this.props.navigation.navigate("Start")}>
@@ -296,7 +296,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     title: {
-        marginTop: 100,
+        marginTop: hp(5),
     },
     titleText: {
         textAlign: 'center',
@@ -306,22 +306,23 @@ const styles = StyleSheet.create({
     button: {
         width: '90%',
         backgroundColor: "#565962",
-        padding: 20,
+        paddingVertical: 10,
+        paddingHorizontal: 10,
         color: '#445463',
         marginLeft: 'auto',
         marginRight: 'auto',
         marginTop: 10,
-        borderRadius: 20
+        borderRadius: 10
     },
     nextQuestion: {
-        width: 200,
+        width: wp(40),
         backgroundColor: "#5E5DF0",
         padding: 20,
         color: '#445463',
         marginLeft: 'auto',
         marginRight: 'auto',
         marginTop: 30,
-        borderRadius: 30
+        borderRadius: 20
     },
     goBack: {
         width: 150,
@@ -331,7 +332,7 @@ const styles = StyleSheet.create({
         marginLeft: 'auto',
         marginRight: 'auto',
         marginTop: 30,
-        borderRadius: 20
+        borderRadius: 10
     },
     info_container: {
         flex: 1,
@@ -347,10 +348,11 @@ const styles = StyleSheet.create({
     },
     funFact: {
         textAlign: 'center',
-        fontSize: 30,
+        fontSize: hp(3),
         marginBottom: 30,
         fontWeight: '800',
-        color: '#019267'
+        color: '#019267',
+        paddingHorizontal: hp(5)
     },
     curScore: {
         position: 'absolute',

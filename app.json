@@ -1,11 +1,26 @@
 {
   "expo": {
-    "name": "sus_game",
-    "slug": "sus_game",
-    "version": "1.0.0",
+    "name": "CleanUp",
+    "slug": "CleanUp",
+    "version": "1.0.2",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
     "assetBundlePatterns": [
       "**/*"
-    ]
+    ],
+    "ios": {
+      "bundleIdentifier": "org.reactjs.native.CleanUp"
+    },
+    "android": {
+      "package": "org.reactjs.native.CleanUp",
+      "permissions": [],
+      "versionCode": 3
+    },
+    "extra": {
+      "eas": {
+        "projectId": "e381717f-114a-4949-84c9-869fb2262536"
+      }
+    }
   },
-  "name": "sus_game"
+  "name": "CleanUp"
 }

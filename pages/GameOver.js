@@ -4,6 +4,7 @@ import { StyleSheet, Text, View, Pressable, ImageBackground, Keyboard, Touchable
 import Modal from 'react-native-modal';
 import * as SQLite from 'expo-sqlite';
 import Toast from 'react-native-toast-message';
+import axios from 'axios';
 
 const db = SQLite.openDatabase('db.scoreDb');
 
@@ -17,7 +18,8 @@ export default class GameOver extends Component {
             showLeaderboard: false,
             name: '',
             data: null,
-            preQuiz: this.props.route.params.preQuiz
+            preQuiz: this.props.route.params.preQuiz,
+            question: "",
         }
 
         // Create a new database if it does not exist
@@ -26,6 +28,20 @@ export default class GameOver extends Component {
         });
 
         this.fetchData();
+    }
+
+    componentDidMount() {
+        this._isMounted = true;
+        axios.get('https://dust-game.herokuapp.com?type=1')
+        .then((response) => {
+            let data = response.data["Facts"];
+            let random = Math.floor(Math.random() * Object.keys(data).length);
+            let question = data[String(random)];
+            if(this._isMounted)
+            {
+                this.setState({question: question});
+            }
+        });
     }
 
     fetchData = () => {
@@ -87,7 +103,7 @@ export default class GameOver extends Component {
                     </View>
                     <View style={styles.info_container}>
                         <Text style={[styles.fact, {color: this.state.score < 20 && 'white'}]}>Fact</Text>
-                        <Text style={[styles.factText, {color: this.state.score < 20 && 'white'}]}>Temporary fun fact</Text>
+                        <Text style={[styles.factText, {color: this.state.score < 20 && 'white'}]}>{this.state.question}</Text>
                     </View>
                     <View style={styles.bottomContainer}>
                         <Pressable style={styles.button} onPress={() => this.props.navigation.navigate("Quiz", {preQuiz: this.state.preQuiz})}>
