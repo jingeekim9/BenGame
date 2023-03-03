@@ -43,7 +43,7 @@ export default class Quiz extends Component {
     componentDidMount() {
         this._isMounted = true;
         this.setState({isLoading: true});
-        axios.get('https://dust-game.herokuapp.com?type=2')
+        axios.get('https://flask-fire-pvgoei5sza-ue.a.run.app/?type=2')
         .then((response) => {
             let data = JSON.parse(response.data.replace(/\bNaN\b/g, "null"));
             let arr = [];
@@ -224,6 +224,11 @@ export default class Quiz extends Component {
                         <ActivityIndicator style={{textAlign: 'center', marginTop: hp(30)}} size="large" color="#0000ff" />
                         :
                         <View style={styles.info_container}>
+                             <ScrollView
+                                style={{
+                                    paddingBottom: hp(10)
+                                }}
+                            >
                             <Text style={styles.funFact}>{this.state.question[this.state.curQuestion]}</Text>
                             {
                                 this.state.type[this.state.curQuestion] == "True/False" ?
@@ -261,6 +266,7 @@ export default class Quiz extends Component {
                                 {
                                     this.state.curQuestion < 9 &&
                                     <Pressable style={styles.nextQuestion} onPress={() => {
+                                        Toast.hide();
                                         this.next();
                                         }}>
                                         <Text style={{textAlign: 'center', color: 'white', fontWeight: 'bold', fontSize: hp(2)}}>Next Question</Text>
@@ -270,6 +276,7 @@ export default class Quiz extends Component {
                                     <Text style={{textAlign: 'center', color: 'white', fontWeight: 'bold'}}>Go Back</Text>
                                 </Pressable>
                             </View>
+                            </ScrollView>
                         </View>
                     }
                 </ImageBackground>

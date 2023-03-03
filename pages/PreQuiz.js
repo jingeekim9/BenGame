@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Button, Animated, Pressable, ActivityIndicator, ImageBackground } from 'react-native';
+import { StyleSheet, Text, View, Button, Animated, Pressable, ActivityIndicator, ImageBackground, ScrollView } from 'react-native';
 import Toast from "react-native-toast-message";
 import Modal from 'react-native-modal';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
@@ -42,7 +42,7 @@ export default class PreQuiz extends Component {
     componentDidMount() {
         this._isMounted = true;
         this.setState({isLoading: true});
-        axios.get('https://dust-game.herokuapp.com?type=2')
+        axios.get('https://flask-fire-pvgoei5sza-ue.a.run.app/?type=2')
         .then((response) => {
             let data = JSON.parse(response.data.replace(/\bNaN\b/g, "null"));
             let arr = [];
@@ -209,7 +209,7 @@ export default class PreQuiz extends Component {
                     source={require('../assets/game_over/clean_world.png')}
                     style={{
                         width: '100%',
-                        height: '100%'
+                        height: '100%',
                     }}
                 >  
                     <Text style={styles.curScore}>{this.state.right} / {this.state.quesNum}</Text>
@@ -223,6 +223,11 @@ export default class PreQuiz extends Component {
                         <ActivityIndicator style={{textAlign: 'center', marginTop: hp(30)}} size="large" color="#0000ff" />
                         :
                         <View style={styles.info_container}>
+                            <ScrollView
+                                style={{
+                                    paddingBottom: hp(10)
+                                }}
+                            >
                             <Text style={styles.funFact}>{this.state.question[this.state.curQuestion]}</Text>
                             {
                                 this.state.type[this.state.curQuestion] == "True/False" ?
@@ -260,6 +265,7 @@ export default class PreQuiz extends Component {
                                 {
                                     this.state.curQuestion < 9 &&
                                     <Pressable style={styles.nextQuestion} onPress={() => {
+                                        Toast.hide();
                                         this.next();
                                         }}>
                                         <Text style={{textAlign: 'center', color: 'white', fontWeight: 'bold', fontSize: hp(2)}}>Next Question</Text>
@@ -269,6 +275,7 @@ export default class PreQuiz extends Component {
                                     <Text style={{textAlign: 'center', color: 'white', fontWeight: 'bold'}}>Go Back</Text>
                                 </Pressable>
                             </View>
+                            </ScrollView>
                         </View>
                     }
                 </ImageBackground>
@@ -296,7 +303,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     title: {
-        marginTop: hp(5),
+        marginTop: hp(10),
     },
     titleText: {
         textAlign: 'center',
@@ -332,12 +339,14 @@ const styles = StyleSheet.create({
         marginLeft: 'auto',
         marginRight: 'auto',
         marginTop: 30,
-        borderRadius: 10
+        borderRadius: 10,
+        marginBottom: hp(10)
     },
     info_container: {
         flex: 1,
         justifyContent: 'center',
-        alignContent: 'center'
+        alignContent: 'center',
+        marginTop: hp(5)
     },
     questionText: {
         textAlign: 'center',

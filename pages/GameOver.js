@@ -32,7 +32,7 @@ export default class GameOver extends Component {
 
     componentDidMount() {
         this._isMounted = true;
-        axios.get('https://dust-game.herokuapp.com?type=1')
+        axios.get('https://flask-fire-pvgoei5sza-ue.a.run.app/?type=1')
         .then((response) => {
             let data = response.data["Facts"];
             let random = Math.floor(Math.random() * Object.keys(data).length);

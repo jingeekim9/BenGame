@@ -2,19 +2,19 @@
   "expo": {
     "name": "CleanUp",
     "slug": "CleanUp",
-    "version": "1.0.2",
+    "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
-      "bundleIdentifier": "org.reactjs.native.CleanUp"
+      "bundleIdentifier": "org.reactjs.CleanUp"
     },
     "android": {
-      "package": "org.reactjs.native.CleanUp",
+      "package": "org.reactjs.CleanUp",
       "permissions": [],
-      "versionCode": 3
+      "versionCode": 1
     },
     "extra": {
       "eas": {

@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Dimensions, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { GameEngine } from 'react-native-game-engine';
 import Matter from "matter-js";
 import { Trash } from "./Trash";
@@ -12,6 +12,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { Background } from './Background';
 import Modal from "react-native-modal";
 import axios from 'axios';
+import { heightPercentageToDP as hp, widthPercentageToDP as wp } from 'react-native-responsive-screen';
 
 function RestartPlay({ gameRunning, onUpdate }) {
   useFocusEffect(
@@ -73,7 +74,7 @@ export default class Game extends Component {
   }
 
   componentDidMount() {
-    axios.get('https://dust-game.herokuapp.com?type=1')
+    axios.get('https://flask-fire-pvgoei5sza-ue.a.run.app?type=1')
     .then((response) => {
       let data = response.data;
       let arr = [];
@@ -200,17 +201,32 @@ export default class Game extends Component {
             </View>
           </TouchableOpacity>
         </Modal>
-        <Modal isVisible={this.state.quizModalVisible}>
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <View style={{backgroundColor: 'white', paddingVertical: 20, paddingHorizontal: 10, borderRadius: 10}}>
-              <Text style={styles.funFact}>Sustainability Fact</Text>
-                <Text style={styles.questionText}>{this.state.facts[this.state.level]}</Text>
-                <TouchableOpacity style={styles.button} onPress={() => {
-                  this.setState({quizModalVisible: false});
-                  this.setState({gameRunning: true});
-                }}>
-                    <Text style={{color: 'white', textAlign: 'center'}}>Continue</Text>
-                </TouchableOpacity>
+        <Modal isVisible={true}>
+          <View style={{ justifyContent: 'center', alignItems: 'center', height: hp(50) }}>
+            <View
+              style={{
+                flex: 1,
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <ScrollView style={{backgroundColor: 'white', paddingVertical: 20, paddingHorizontal: 10, borderRadius: 10}}>
+                <Text style={styles.funFact}>Sustainability Fact</Text>
+                  <Text style={styles.questionText}>{this.state.facts[this.state.level]}</Text>
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: 'flex-end'
+                    }}
+                  >
+                    <TouchableOpacity style={styles.button} onPress={() => {
+                      this.setState({quizModalVisible: false});
+                      this.setState({gameRunning: true});
+                    }}>
+                        <Text style={{color: 'white', textAlign: 'center'}}>Continue</Text>
+                    </TouchableOpacity>
+                  </View>
+              </ScrollView>
             </View>
           </View>
         </Modal>
@@ -240,9 +256,8 @@ const styles = StyleSheet.create({
     color: 'white',
     marginLeft: 'auto',
     marginRight: 'auto',
-    marginTop: 30,
-    marginBottom: 30,
-    borderRadius: 20
+    borderRadius: 20,
+    marginTop: hp(10)
   },
   funFact: {
       textAlign: 'center',
