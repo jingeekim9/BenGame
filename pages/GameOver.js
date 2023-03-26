@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Pressable, ImageBackground, Keyboard, TouchableWithoutFeedback, TextInput } from 'react-native';
+import { StyleSheet, Text, View, Pressable, ImageBackground, Keyboard, TouchableWithoutFeedback, TextInput, ScrollView } from 'react-native';
 import Modal from 'react-native-modal';
 import * as SQLite from 'expo-sqlite';
 import Toast from 'react-native-toast-message';
@@ -32,7 +32,7 @@ export default class GameOver extends Component {
 
     componentDidMount() {
         this._isMounted = true;
-        axios.get('https://flask-fire-pvgoei5sza-ue.a.run.app/?type=1')
+        axios.get('https://flask-fire-pvgoei5sza-uw.a.run.app/?type=1')
         .then((response) => {
             let data = response.data["Facts"];
             let random = Math.floor(Math.random() * Object.keys(data).length);
@@ -102,8 +102,10 @@ export default class GameOver extends Component {
                         </Text>
                     </View>
                     <View style={styles.info_container}>
-                        <Text style={[styles.fact, {color: this.state.score < 20 && 'white'}]}>Fact</Text>
-                        <Text style={[styles.factText, {color: this.state.score < 20 && 'white'}]}>{this.state.question}</Text>
+                        <ScrollView>
+                            <Text style={[styles.fact, {color: this.state.score < 20 && 'white'}]}>Fact</Text>
+                            <Text style={[styles.factText, {color: this.state.score < 20 && 'white'}]}>{this.state.question}</Text>
+                        </ScrollView>
                     </View>
                     <View style={styles.bottomContainer}>
                         <Pressable style={styles.button} onPress={() => this.props.navigation.navigate("Quiz", {preQuiz: this.state.preQuiz})}>

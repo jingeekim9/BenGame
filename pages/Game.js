@@ -74,7 +74,7 @@ export default class Game extends Component {
   }
 
   componentDidMount() {
-    axios.get('https://flask-fire-pvgoei5sza-ue.a.run.app?type=1')
+    axios.get('https://flask-fire-pvgoei5sza-uw.a.run.app?type=1')
     .then((response) => {
       let data = response.data;
       let arr = [];
@@ -201,7 +201,7 @@ export default class Game extends Component {
             </View>
           </TouchableOpacity>
         </Modal>
-        <Modal isVisible={true}>
+        <Modal isVisible={this.state.quizModalVisible}>
           <View style={{ justifyContent: 'center', alignItems: 'center', height: hp(50) }}>
             <View
               style={{
@@ -257,7 +257,8 @@ const styles = StyleSheet.create({
     marginLeft: 'auto',
     marginRight: 'auto',
     borderRadius: 20,
-    marginTop: hp(10)
+    marginTop: hp(10),
+    marginBottom: hp(10)
   },
   funFact: {
       textAlign: 'center',

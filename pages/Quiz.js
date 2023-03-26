@@ -43,7 +43,7 @@ export default class Quiz extends Component {
     componentDidMount() {
         this._isMounted = true;
         this.setState({isLoading: true});
-        axios.get('https://flask-fire-pvgoei5sza-ue.a.run.app/?type=2')
+        axios.get('https://flask-fire-pvgoei5sza-uw.a.run.app/?type=2')
         .then((response) => {
             let data = JSON.parse(response.data.replace(/\bNaN\b/g, "null"));
             let arr = [];
